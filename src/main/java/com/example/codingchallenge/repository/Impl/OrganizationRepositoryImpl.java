@@ -12,9 +12,8 @@ import java.util.List;
 @Repository
 public class OrganizationRepositoryImpl implements OrganizationRepository {
 
-    String driver = "org.voltdb.jdbc.Driver";
-    // ubuntu voltdb ip - 172.25.50.212
-    String url = "jdbc:voltdb://172.25.50.212:21212";
+    private String driver = "org.voltdb.jdbc.Driver";
+    private String url = "jdbc:voltdb://172.25.50.222:21212";
 
     public OrganizationRepositoryImpl() {
 
