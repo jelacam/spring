@@ -8,6 +8,8 @@ import com.example.codingchallenge.repository.PermissionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class PermissionRepositoryImpl implements PermissionRepository {
@@ -16,6 +18,11 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     private String url = "jdbc:voltdb://172.25.50.222:21212";
 
     private String select = "SELECT id, entity, operation, roleId FROM PERMISSION WHERE id = ':id'";
+    private String selectByRoleId = "SELECT id, entity, operation, roleId FROM PERMISSION WHERE roleId = ':roleId'";
+    private String selectPermissionByAdminId = "SELECT permission.id, permission.entity, permission.operation, " +
+            " permission.roleid from permission inner join role on permission.roleid = role.id inner join adminrole on" +
+            " adminrole.roleid = role.id where adminrole.adminid = ':adminId'";
+
     @Override
     public boolean CreatePermission(Permission permission) {
         try {
@@ -61,6 +68,64 @@ public class PermissionRepositoryImpl implements PermissionRepository {
             return permission;
 
         } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Permission> FindByRoleId(String id) {
+        try {
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            Statement query = connection.createStatement();
+            ResultSet results = query.executeQuery(selectByRoleId.replace(":roleId", id));
+
+            List<Permission> permissions = new ArrayList<>();
+
+            while (results.next()){
+                Permission permission = new Permission();
+                permission.setId(results.getString("id"));
+                permission.setEntity(Entity.values()[results.getShort("entity")]);
+                permission.setOperation(Operation.values()[results.getShort("operation")]);
+                permission.setRoleId(results.getString("roleId"));
+                permissions.add(permission);
+            }
+            results.close();
+            query.close();
+            connection.close();
+            return permissions;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Permission> FindByAdminId(String id) {
+        try{
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            Statement query = connection.createStatement();
+            ResultSet results = query.executeQuery(selectPermissionByAdminId.replace(":adminId", id));
+            List<Permission> permissions = new ArrayList<>();
+
+            while(results.next()){
+                Permission permission = new Permission();
+                permission.setId(results.getString("id"));
+                permission.setEntity(Entity.values()[results.getShort("entity")]);
+                permission.setOperation(Operation.values()[results.getShort("operation")]);
+                permission.setRoleId(results.getString("roleId"));
+                permissions.add(permission);
+            }
+
+            results.close();
+            query.close();
+            connection.close();
+            return permissions;
+        }
+        catch (Exception e){
             e.printStackTrace();
             return null;
         }

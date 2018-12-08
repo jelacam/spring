@@ -3,6 +3,8 @@ package com.example.codingchallenge.controller;
 import com.example.codingchallenge.model.Product;
 import com.example.codingchallenge.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class ProductController {
         productService.CreateProduct(product);
     }
 
+    @PreAuthorize("hasPermission(new com.example.codingchallenge.model.Product(), 'READ')")
     @RequestMapping(value = "/getall", method = RequestMethod.GET)
     List<Product> GetAllProducts(){
         return productService.GetAllProducts();

@@ -11,9 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.Filter;
 
 
 @EnableWebSecurity
@@ -22,17 +20,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-//    @Override
-//    protected void configure(HttpSecurity httpSecurity) throws Exception {
-//        httpSecurity
-//                .authorizeRequests()
-//                .anyRequest()
-//                .permitAll()
-//                .and()
-//                .addFilterBefore(customFilter(), BasicAuthenticationFilter.class)
-//                .httpBasic();
-//        httpSecurity.csrf().disable();
-//    }
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -53,9 +41,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected  void configure(AuthenticationManagerBuilder auth) throws  Exception {
           auth.authenticationProvider(authenticationProvider());
-//        auth.inMemoryAuthentication()
-//                .withUser("marko").password("marko").roles("ADMIN").and()
-//                .withUser("user").password("user").roles("ADMIN");
     }
 
     @Bean

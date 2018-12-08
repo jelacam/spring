@@ -1,5 +1,7 @@
 package com.example.codingchallenge.model;
 
+import java.util.List;
+
 public class Admin {
 
     private String id; //PK
@@ -7,6 +9,13 @@ public class Admin {
     private String lastName; //NN
     private String email; //NN
     private String password;
+    private String organizationId; //NN FK
+
+
+
+    private List<Permission> permissions;
+
+
 
     public Admin(){
 
@@ -36,6 +45,10 @@ public class Admin {
         return organizationId;
     }
 
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
 
     public void setId(String id) {
         this.id = id;
@@ -61,6 +74,8 @@ public class Admin {
         this.organizationId = organizationId;
     }
 
-    private String organizationId; //NN FK
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
 
 }

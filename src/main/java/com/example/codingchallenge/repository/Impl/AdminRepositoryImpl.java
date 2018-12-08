@@ -2,6 +2,8 @@ package com.example.codingchallenge.repository.Impl;
 
 import com.example.codingchallenge.model.Admin;
 import com.example.codingchallenge.repository.AdminRepository;
+import com.example.codingchallenge.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -17,6 +19,9 @@ public class AdminRepositoryImpl implements AdminRepository {
 
     private String select = "SELECT id, firstName, lastName, email, organizationId FROM ADMIN WHERE id = ':id'";
     private String selectByUsername = "SELECT id, firstName, lastName, email, password, organizationId FROM ADMIN WHERE email = ':email'";
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public boolean createAdminUser(Admin admin) {
@@ -137,6 +142,9 @@ public class AdminRepositoryImpl implements AdminRepository {
                 admin.setEmail(results.getString("email"));
                 admin.setPassword(results.getString(("password")));
             }
+
+            //admin.setAdminRoles(roleRepository.FindAdminRoleByAdminId(admin.getId()));
+
             results.close();
             query.close();
             connection.close();
