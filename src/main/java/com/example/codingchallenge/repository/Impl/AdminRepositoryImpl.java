@@ -16,6 +16,8 @@ public class AdminRepositoryImpl implements AdminRepository {
     private String url = "jdbc:voltdb://172.25.50.222:21212";
 
     private String select = "SELECT id, firstName, lastName, email, organizationId FROM ADMIN WHERE id = ':id'";
+    private String selectByUsername = "SELECT id, firstName, lastName, email, password, organizationId FROM ADMIN WHERE email = ':email'";
+
     @Override
     public boolean createAdminUser(Admin admin) {
 
@@ -117,4 +119,34 @@ public class AdminRepositoryImpl implements AdminRepository {
             return null;
         }
     }
+
+    @Override
+    public Admin findAdminByUsername(String email) {
+        try{
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            Statement query = connection.createStatement();
+            ResultSet results = query.executeQuery(selectByUsername.replace(":email", email));
+
+            Admin admin = new Admin();
+            while(results.next()){
+                admin.setId(results.getString("id"));
+                admin.setFirstName(results.getString("firstName"));
+                admin.setLastName(results.getString("lastName"));
+                admin.setOrganizationId(results.getString("organizationId"));
+                admin.setEmail(results.getString("email"));
+                admin.setPassword(results.getString(("password")));
+            }
+            results.close();
+            query.close();
+            connection.close();
+            return admin;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }

@@ -7,4 +7,6 @@ public interface AdminRepository {
     Admin updateAdmin(Admin admin);
     boolean deleteAdmin(String id);
     Admin findAdmin(String id);
+
+    Admin findAdminByUsername(String username);
 }
