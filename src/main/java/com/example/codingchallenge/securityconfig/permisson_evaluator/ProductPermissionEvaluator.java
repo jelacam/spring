@@ -1,21 +1,23 @@
-package com.example.codingchallenge.securityconfig;
+package com.example.codingchallenge.securityconfig.permisson_evaluator;
 
 
 import com.example.codingchallenge.model.Operation;
 import com.example.codingchallenge.model.Product;
 import com.example.codingchallenge.model.ProductSharingStatement;
 import com.example.codingchallenge.model.Relation;
+import com.example.codingchallenge.securityconfig.CustomPrincipal;
+import com.example.codingchallenge.securityconfig.PermissionEvaluator;
 import com.example.codingchallenge.service.ProductService;
 import com.example.codingchallenge.service.ProductSharingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
-public class SharingPermissionEvaluatorService implements SharingPermissionEvaluator  {
+@Component
+public class ProductPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private ProductSharingService productSharingService;
@@ -31,6 +33,7 @@ public class SharingPermissionEvaluatorService implements SharingPermissionEvalu
      * @param auth - authentication object
      * @param permission - allowed permission (operation) for accessing object
      */
+    @Override
     public boolean SharingPermission(Authentication auth, String objectId, String targetType, String permission) {
         // get user organization id - accessingOrgId for ProductSharingStatement object
         CustomPrincipal principal = (CustomPrincipal) auth.getPrincipal();
