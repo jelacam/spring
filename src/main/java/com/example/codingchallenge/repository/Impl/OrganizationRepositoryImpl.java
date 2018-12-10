@@ -2,6 +2,7 @@ package com.example.codingchallenge.repository.Impl;
 
 import com.example.codingchallenge.model.Organization;
 import com.example.codingchallenge.repository.OrganizationRepository;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 import org.springframework.stereotype.Repository;
 
 import java.sql.DriverManager;
@@ -50,6 +51,26 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         }
 
         return null;
+    }
+
+    @Override
+    public void Create(Organization organization) {
+        try {
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            CallableStatement procedure = connection.prepareCall("{call ORGANIZATION.insert(?, ?, ?)}");
+            procedure.setString(1, organization.getId());
+            procedure.setString(2, organization.getName());
+            procedure.setShort(3, (short) (organization.getMaster() ? 1 : 0));
+
+            procedure.executeQuery();
+
+            procedure.close();
+            connection.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

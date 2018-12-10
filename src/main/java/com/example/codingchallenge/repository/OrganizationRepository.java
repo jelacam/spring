@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface OrganizationRepository {
     List<Organization> findAll();
+    void Create(Organization organization);
 }

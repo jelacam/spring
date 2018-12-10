@@ -1,9 +1,28 @@
 package com.example.codingchallenge.model;
 
-public class ProductDTO extends  Product {
-    private Operation[] allowedOps;
+public class ProductDTO {
 
-    public ProductDTO() {
-        super();
+    private Operation[] allowedOps;
+    private Product product;
+
+    public Operation[] getAllowedOps() {
+        return allowedOps;
     }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setAllowedOps(Operation[] allowedOps) {
+        this.allowedOps = allowedOps;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+
+
+
+
 }

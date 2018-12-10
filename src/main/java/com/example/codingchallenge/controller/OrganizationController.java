@@ -18,8 +18,9 @@ public class OrganizationController {
     @RequestMapping(value = "/create", method =  RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void createOrganization(@ModelAttribute Organization organization ){
+        String id = UUID.randomUUID().toString();
+        organization.setId(id);
         organizationService.CreateOrganization(organization);
-        System.out.println(organization);
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)

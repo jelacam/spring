@@ -33,10 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable();
     }
 
-//    @Bean
-//    public CustomFilter customFilter() {
-//        return new CustomFilter();
-//    }
+
 
     @Override
     protected  void configure(AuthenticationManagerBuilder auth) throws  Exception {

@@ -39,6 +39,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product FindById(String id) {
-        return null;
+        return productRepository.FindById(id);
     }
 }

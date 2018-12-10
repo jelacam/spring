@@ -7,6 +7,7 @@ public class Product {
     private String  description;
     private Double price;
     private String organizationId; // nn fk
+    private int quantity;
 
     public String getId() {
         return id;
@@ -28,6 +29,8 @@ public class Product {
         return organizationId;
     }
 
+    public int getQuantity() { return quantity; }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -47,6 +50,8 @@ public class Product {
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
     }
+
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 
 
 }

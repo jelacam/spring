@@ -37,6 +37,7 @@ CREATE TABLE Product (
      name VARCHAR(255) NOT NULL,
      description VARCHAR(255),
      price FLOAT,
+     quantity BIGINT,
      organizationId VARCHAR(255) FOREIGN KEY REFERENCES Organization(id)
 );
 
@@ -45,7 +46,9 @@ CREATE TABLE ProductSharingStatement (
      sharingOrgId VARCHAR(255)  FOREIGN KEY REFERENCES Organization(id),
      accessingOrgId VARCHAR(255)  FOREIGN KEY REFERENCES Organization(id),
      quantity BIGINT,
+     price FLOAT,
      relation TINYINT,
+     operation TINYINT,
      approved TINYINT
 );
 
