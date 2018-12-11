@@ -39,7 +39,7 @@ public class ProductController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Operation[] allowedOps = GetUserAllowedOperations(userDetails);
 
-        List<Product> products = productService.GetAllProducts();
+        List<Product> products = productService.GetAllProducts(((CustomPrincipal) userDetails).getUser().getOrganizationId());
         List<ProductDTO> productDTOS = new ArrayList<>();
 
         for (Product product : products){

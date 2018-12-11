@@ -100,8 +100,9 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
         try {
             Class.forName(driver);
             Connection connection = DriverManager.getConnection(url);
-            CallableStatement procedure = connection.prepareCall("{call PRODUCTSHARINGSTATEMENT.update(?, ?, ?, ?, ?, ?, ?, ?. ?)}");
-            procedure.setShort(9, (short) 1);
+            CallableStatement procedure = connection.prepareCall("{call PRODUCTSHARINGSTATEMENT.update(?, ?)}");
+            procedure.setShort("approved", (short)1);
+            procedure.setString("id", sharingStatementId);
             procedure.executeQuery();
 
             procedure.close();

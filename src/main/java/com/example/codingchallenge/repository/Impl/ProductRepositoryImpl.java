@@ -1,6 +1,7 @@
 package com.example.codingchallenge.repository.Impl;
 
 import com.example.codingchallenge.model.Product;
+import com.example.codingchallenge.model.SharingStatementQuery;
 import com.example.codingchallenge.repository.ProductRepository;
 import org.springframework.stereotype.Repository;
 
@@ -140,6 +141,46 @@ public class ProductRepositoryImpl implements ProductRepository {
             query.close();
             connection.close();
             return product;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Product> GetAllProducts(List<SharingStatementQuery> sharingStatementQueries, String accessingOrgId) {
+        try {
+            // create select query
+            String selectQuery = select.concat(" WHERE organizationId = '" + accessingOrgId+"'");
+            for (SharingStatementQuery statementQuery: sharingStatementQueries) {
+                selectQuery = selectQuery.concat(" OR (organizationId = '" + statementQuery.getSharingOrgId() + "'");
+                if (statementQuery.getValue() != null && statementQuery.getRelation() != null && statementQuery.getAttribute() != null){
+                    selectQuery = selectQuery.concat(" AND " + statementQuery.getAttribute() + " " + statementQuery.getRelation() + " " + statementQuery.getValue() + ") ");
+                }
+            }
+
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            Statement query = connection.createStatement();
+            ResultSet results = query.executeQuery(selectQuery);
+
+            List<Product> products = new ArrayList<>();
+            while(results.next()){
+                Product product = new Product();
+                product.setId(results.getString("id"));
+                product.setName(results.getString("name"));
+                product.setDescription(results.getString("description"));
+                product.setPrice(results.getDouble("price"));
+                product.setOrganizationId(results.getString("organizationId"));
+                product.setQuantity(results.getInt("quantity"));
+                products.add(product);
+            }
+
+            results.close();
+            query.close();
+            connection.close();
+            return products;
         }
         catch (Exception e){
             e.printStackTrace();
