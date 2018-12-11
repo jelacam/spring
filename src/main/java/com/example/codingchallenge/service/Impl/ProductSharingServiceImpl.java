@@ -37,4 +37,9 @@ public class ProductSharingServiceImpl implements ProductSharingService {
     public boolean ForbidSharingStatement(String sharingStatementId) {
         return productSharingRepository.ForbidSharingStatement(sharingStatementId);
     }
+
+    @Override
+    public ProductSharingStatement FindById(String id) {
+        return productSharingRepository.FindById(id);
+    }
 }

@@ -12,12 +12,9 @@ import java.io.Serializable;
 @Component
 public class CustomPermissionEvaluator implements org.springframework.security.access.PermissionEvaluator {
 
-//    @Autowired
-//    private PermissionEvaluator sharingPermissionEvaluator;
-
     @Autowired
-    @Qualifier(value = "adminPermissionEvaluator")
-    private PermissionEvaluator adminPermissionEvaluator;
+    @Qualifier(value = "entityPermissionEvaluator")
+    private PermissionEvaluator entityPermissionEvaluator;
 
     @Autowired
     @Qualifier(value = "productPermissionEvaluator")
@@ -46,7 +43,6 @@ public class CustomPermissionEvaluator implements org.springframework.security.a
             if (grantedAuth.getAuthority().startsWith(targetType)) {
                 if (grantedAuth.getAuthority().contains(permission)) {
                     if (targetId != null) {
-                        //return sharingPermissionEvaluator.SharingPermission(auth, targetId, targetType, permission);
                         return SharingPermissionEvaluatorFactory(targetType).SharingPermission(auth, targetId, targetType, permission);
                     }
                     return true;
@@ -62,22 +58,9 @@ public class CustomPermissionEvaluator implements org.springframework.security.a
             case PRODUCT: {
                 return productPermissionEvaluator;
             }
-            case ADMIN: {
-                return adminPermissionEvaluator;
-            }
-            case ORGANIZATION: {
-                // return new OrganizationPermissionEvaluator
-                break;
-            }
-            case ROLE: {
-                // return new RolePermissionEvaluator
-                break;
-            }
-            case SHARING_STATEMENT: {
-                // return new SharingStatementPermissionEvalutor
-                break;
+            default: {
+                return entityPermissionEvaluator;
             }
         }
-        return null;
     }
 }

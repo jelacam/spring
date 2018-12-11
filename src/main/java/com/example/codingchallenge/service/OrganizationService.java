@@ -9,4 +9,8 @@ public interface OrganizationService {
     Organization OrganizationByID(String id);
     Organization OrganizationByName(String name);
     List<Organization> getAll();
+
+    boolean UpdateOrganization(Organization organization);
+
+    boolean DeleteOrganization(String id);
 }

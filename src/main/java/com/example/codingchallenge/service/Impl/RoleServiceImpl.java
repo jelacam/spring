@@ -28,4 +28,19 @@ public class RoleServiceImpl implements RoleService {
         adminRole.setId(id);
         roleRepository.CreateAdminRole(adminRole);
     }
+
+    @Override
+    public Role FindById(String id) {
+        return roleRepository.FindRoleById(id);
+    }
+
+    @Override
+    public boolean UpdateRole(Role role) {
+        return false;
+    }
+
+    @Override
+    public boolean DeleteRole(String id) {
+        return false;
+    }
 }

@@ -73,4 +73,47 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         }
     }
 
+    @Override
+    public boolean UpdateOrganization(Organization organization) {
+        try {
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            CallableStatement procedure = connection.prepareCall("{call ORGANIZATION.update(?, ?, ?, ?)}");
+            procedure.setString(1, organization.getId());
+            procedure.setString(2, organization.getName());
+            procedure.setShort(3, (short) (organization.getMaster() ? 1 : 0));
+            procedure.setString(4, organization.getId());
+
+            procedure.executeQuery();
+
+            procedure.close();
+            connection.close();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean DeleteOrganization(String id) {
+        try {
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            CallableStatement procedure = connection.prepareCall("{call ORGANIZATION.delete(?)}");
+            procedure.setString(1, id);
+
+            procedure.executeQuery();
+
+            procedure.close();
+            connection.close();
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

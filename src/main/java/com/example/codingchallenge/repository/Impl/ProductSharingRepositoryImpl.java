@@ -19,7 +19,7 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
 
     private String selectSharingStatementByAccesssingOrgId = "SELECT * FROM PRODUCTSHARINGSTATEMENT WHERE accessingOrgId = ':accessingOrgId' " +
             "AND approved = 1 AND operation = :operation";
-
+    private String selectById = "SELECT * FROM PRODUCTSHARINGSTATEMENT WHERE id = ':id'";
 
     @Override
     public void CreateSharingStatement(ProductSharingStatement productSharingStatement) {
@@ -132,6 +132,44 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
         catch (Exception e){
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public ProductSharingStatement FindById(String id) {
+        try {
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(url);
+            Statement query = connection.createStatement();
+            ResultSet results = query.executeQuery(selectById.replace(":id", id));
+
+            ProductSharingStatement productSharingStatement = new ProductSharingStatement();
+            while(results.next()){
+
+                productSharingStatement.setId(results.getString("id"));
+                productSharingStatement.setSharingOrgId(results.getString("sharingOrgId"));
+                productSharingStatement.setAccessingOrgId(results.getString("accessingOrgId"));
+                if (results.getFloat("price") >= 0) {
+                    productSharingStatement.setPrice(results.getFloat("price"));
+                }
+                if (results.getInt("quantity") >= 0) {
+                    productSharingStatement.setQuantity(results.getInt("quantity"));
+                }
+                if (results.getShort("relation") >= 0) {
+                    productSharingStatement.setRelation(Relation.values()[results.getShort("relation")]);
+                }
+                productSharingStatement.setApproved(results.getShort("approved") == 1);
+                productSharingStatement.setOperation(Operation.values()[results.getShort("operation")]);
+
+            }
+            results.close();
+            query.close();
+            connection.close();
+            return productSharingStatement;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 

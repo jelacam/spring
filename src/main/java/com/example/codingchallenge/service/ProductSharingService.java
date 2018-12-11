@@ -10,4 +10,5 @@ public interface ProductSharingService {
     List<ProductSharingStatement> FindProductSharingByAccessingOrgIdAndOperation(String accessingOrgId, Operation operation);
     boolean ApproveSharingStatement(String sharingStatementId);
     boolean ForbidSharingStatement(String sharingStatementId);
+    ProductSharingStatement FindById(String id);
 }

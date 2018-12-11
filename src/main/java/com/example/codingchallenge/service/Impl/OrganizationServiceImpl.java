@@ -38,4 +38,14 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findAll();
     }
 
+    @Override
+    public boolean UpdateOrganization(Organization organization) {
+        return organizationRepository.UpdateOrganization(organization);
+    }
+
+    @Override
+    public boolean DeleteOrganization(String id) {
+        return organizationRepository.DeleteOrganization(id);
+    }
+
 }
