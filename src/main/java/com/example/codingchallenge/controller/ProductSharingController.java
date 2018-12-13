@@ -2,11 +2,12 @@ package com.example.codingchallenge.controller;
 
 import com.example.codingchallenge.model.Operation;
 import com.example.codingchallenge.model.ProductSharingStatement;
+import com.example.codingchallenge.securityconfig.CustomPrincipal;
 import com.example.codingchallenge.service.ProductSharingService;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,7 +24,9 @@ public class ProductSharingController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void CreateProductSharingStatement(ProductSharingStatement productSharingStatement){
+    public void CreateProductSharingStatement(Authentication authentication, ProductSharingStatement productSharingStatement){
+        String sharingOrgId = ((CustomPrincipal) authentication.getPrincipal()).getUser().getOrganizationId();
+        productSharingStatement.setSharingOrgId(sharingOrgId);
         productSharingService.CreateProductSharingStatement(productSharingStatement);
     }
 

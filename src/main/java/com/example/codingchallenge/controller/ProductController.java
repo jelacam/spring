@@ -1,11 +1,10 @@
 package com.example.codingchallenge.controller;
 
-import com.example.codingchallenge.model.Entity;
-import com.example.codingchallenge.model.Operation;
-import com.example.codingchallenge.model.Product;
-import com.example.codingchallenge.model.ProductDTO;
+import com.example.codingchallenge.model.*;
 import com.example.codingchallenge.securityconfig.CustomPrincipal;
+import com.example.codingchallenge.service.Impl.ProductSharingServiceImpl;
 import com.example.codingchallenge.service.ProductService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +24,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductSharingServiceImpl productSharingService;
+
     @PreAuthorize("hasPermission(new com.example.codingchallenge.model.Product(), 'CREATE')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public void CreateProduct(Authentication authentication, @ModelAttribute Product product) {
@@ -37,19 +39,10 @@ public class ProductController {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<ProductDTO> GetAllProducts(Authentication authentication){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Operation[] allowedOps = GetUserAllowedOperations(userDetails);
+        String accessingOrgId = ((CustomPrincipal) userDetails).getUser().getOrganizationId();
+        List<Product> products = productService.GetAllProducts(accessingOrgId);
 
-        List<Product> products = productService.GetAllProducts(((CustomPrincipal) userDetails).getUser().getOrganizationId());
-        List<ProductDTO> productDTOS = new ArrayList<>();
-
-        for (Product product : products){
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setProduct(product);
-            productDTO.setAllowedOps(allowedOps);
-            productDTOS.add(productDTO);
-        }
-
-        return  productDTOS;
+        return CreateProjectDTOS(accessingOrgId, products, userDetails);
     }
 
     @PreAuthorize("hasPermission(#product.id, 'PRODUCT', 'UPDATE')")
@@ -70,7 +63,7 @@ public class ProductController {
         return productService.FindById(id);
     }
 
-    private Operation[] GetUserAllowedOperations(UserDetails userDetails) {
+    private List<Operation> GetUserAllowedOperations(UserDetails userDetails) {
         List<Operation> operationList = new ArrayList<>();
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         for (GrantedAuthority authority : authorities){
@@ -79,8 +72,84 @@ public class ProductController {
                 operationList.add(Operation.valueOf(operation.toUpperCase()));
             }
         }
+
+        return operationList;
+    }
+
+
+    private List<ProductDTO> CreateProjectDTOS(String accessingOrgId, List<Product> products, UserDetails userDetails){
+
+        List<Operation> allowedUserOps = GetUserAllowedOperations(userDetails);
+
+        List<ProductSharingStatement> productSharingStatements = productSharingService
+                .FindProductSharingByAccessingOrgIdAndOperation(accessingOrgId, null);
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product: products) {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setProduct(product);
+            if (product.getOrganizationId().equals(accessingOrgId)){
+                productDTO.setAllowedOps(ToArray(allowedUserOps));
+            }
+            else {
+                List<Operation> sharedOperations = new ArrayList<>();
+                for (ProductSharingStatement productSharingStatement : productSharingStatements) {
+                    if (productSharingStatement.getSharingOrgId().equals(product.getOrganizationId())) {
+                        Operation sharingOperation = productSharingStatement.getOperation();
+
+                        boolean priceRelation = true;
+                        boolean quantityRelation = true;
+
+                        if (productSharingStatement.getRelation() != null) {
+                            if (productSharingStatement.getPrice() > 0) {
+                                priceRelation = CheckRelationStatement(product.getPrice(), productSharingStatement.getRelation(), productSharingStatement.getPrice());
+                            }
+                            if (productSharingStatement.getQuantity() > 0) {
+                                quantityRelation = CheckRelationStatement(product.getQuantity(), productSharingStatement.getRelation(), productSharingStatement.getQuantity());
+                            }
+
+                        }
+                        if (quantityRelation && priceRelation) {
+                            // add operation if user has that permission
+                            if (allowedUserOps.contains(sharingOperation)) {
+                                sharedOperations.add(sharingOperation);
+                            }
+                        }
+                    }
+                }
+                productDTO.setAllowedOps(ToArray(sharedOperations));
+            }
+            productDTOS.add(productDTO);
+        }
+        return productDTOS;
+    }
+
+    private boolean CheckRelationStatement(double attribute, Relation relation, double value) {
+        switch (relation) {
+            case EQ: {
+                return attribute == value;
+            }
+            case GT: {
+                return attribute > value;
+            }
+            case GTE: {
+                return attribute >= value;
+            }
+            case LT: {
+                return attribute < value;
+            }
+            case LTE: {
+                return attribute <= value;
+            }
+            default: {
+                return  false;
+            }
+        }
+    }
+
+    private Operation[] ToArray(List<Operation> operationList) {
         Operation[] operations = new Operation[operationList.size()];
         operations = operationList.toArray(operations);
         return operations;
     }
+
 }

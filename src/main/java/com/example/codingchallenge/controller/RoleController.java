@@ -16,13 +16,13 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @PreAuthorize("hasPermission(#role.id, 'ROLE', 'CREATE')")
+    //@PreAuthorize("hasPermission(#role.id, 'ROLE', 'CREATE')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public boolean CreateRole(@ModelAttribute Role role){
         return roleService.CreateRole(role);
     }
 
-    @PreAuthorize("hasPermission(new com.example.codingchallenge.model.Admin(), 'CREATE')")
+    //@PreAuthorize("hasPermission(new com.example.codingchallenge.model.Admin(), 'CREATE')")
     @RequestMapping(value = "/adminrole", method = RequestMethod.POST)
     public void BindAdminRole(@ModelAttribute AdminRole adminRole){
         roleService.CreateAdminRole(adminRole);

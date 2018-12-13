@@ -18,7 +18,8 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
     private String url = "jdbc:voltdb://172.25.50.222:21212";
 
     private String selectSharingStatementByAccesssingOrgId = "SELECT * FROM PRODUCTSHARINGSTATEMENT WHERE accessingOrgId = ':accessingOrgId' " +
-            "AND approved = 1 AND operation = :operation";
+            "AND approved = 1";
+    private String addOperationQuery = " AND operation = :operation";
     private String selectById = "SELECT * FROM PRODUCTSHARINGSTATEMENT WHERE id = ':id'";
 
     @Override
@@ -56,8 +57,16 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
     @Override
     public List<ProductSharingStatement> FindSharingStatements(String accessingOrgId, Operation operation) {
         try {
-            String queryUrl = selectSharingStatementByAccesssingOrgId.replace(":accessingOrgId", accessingOrgId)
-                .replace(":operation", String.valueOf(operation.Value()));
+            String queryUrl;
+
+            if (operation != null) {
+                queryUrl = selectSharingStatementByAccesssingOrgId.concat(addOperationQuery);
+                queryUrl = queryUrl.replace(":accessingOrgId", accessingOrgId)
+                        .replace(":operation", String.valueOf(operation.Value()));
+            }
+            else {
+                queryUrl = selectSharingStatementByAccesssingOrgId.replace(":accessingOrgId", accessingOrgId);
+            }
 
             Class.forName(driver);
             Connection connection = DriverManager.getConnection(url);

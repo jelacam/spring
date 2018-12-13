@@ -16,7 +16,7 @@ public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
 
-    @PreAuthorize("hasPermission(#organization.id, 'ORGANIZATION', 'CREATE')")
+    //PreAuthorize("hasPermission(#organization.id, 'ORGANIZATION', 'CREATE')")
     @RequestMapping(value = "/create", method =  RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void CreateOrganization(@ModelAttribute Organization organization ){

@@ -29,7 +29,7 @@ public class EntityPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean SharingPermission(Authentication auth, String objectId, String targetType, String permission) {
-        // get user organization id - accessingOrgId for ProductSharingStatement object
+
         CustomPrincipal principal = (CustomPrincipal) auth.getPrincipal();
         String accessingOrgId = principal.getUser().getOrganizationId();
 

@@ -18,6 +18,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     private String select = "SELECT id, name, description, price, quantity, organizationId FROM PRODUCT";
     private String selectById = "SELECT id, name, description, price, quantity, organizationId FROM PRODUCT WHERE id = ':id'";
+
     @Override
     public void CreateProduct(Product product) {
         try {
@@ -156,8 +157,9 @@ public class ProductRepositoryImpl implements ProductRepository {
             for (SharingStatementQuery statementQuery: sharingStatementQueries) {
                 selectQuery = selectQuery.concat(" OR (organizationId = '" + statementQuery.getSharingOrgId() + "'");
                 if (statementQuery.getValue() != null && statementQuery.getRelation() != null && statementQuery.getAttribute() != null){
-                    selectQuery = selectQuery.concat(" AND " + statementQuery.getAttribute() + " " + statementQuery.getRelation() + " " + statementQuery.getValue() + ") ");
+                    selectQuery = selectQuery.concat(" AND " + statementQuery.getAttribute() + " " + statementQuery.getRelation() + " " + statementQuery.getValue());
                 }
+                selectQuery = selectQuery.concat(" )");
             }
 
             Class.forName(driver);

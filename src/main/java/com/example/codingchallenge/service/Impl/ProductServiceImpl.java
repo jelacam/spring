@@ -30,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> GetAllProducts(String accessingOrgId) {
         List<SharingStatementQuery> sharingStatementQueryList = EvaluateSharingStatements(accessingOrgId);
+
         return productRepository.GetAllProducts(sharingStatementQueryList, accessingOrgId);
     }
 
@@ -60,13 +61,13 @@ public class ProductServiceImpl implements ProductService {
             if (statement.getRelation() != null) {
                 relation = CastRelation(statement.getRelation());
 
-                if (statement.getQuantity() >= 0) {
+                if (statement.getQuantity() > 0) {
                     attribute = "quantity";
                     value = String.format("%s", statement.getQuantity());
                     SharingStatementQuery sharingStatementQuery = new SharingStatementQuery(attribute, relation, value, sharingOrgId);
                     sharingStatementQueryList.add(sharingStatementQuery);
                 }
-                if (statement.getPrice() >= 0) {
+                if (statement.getPrice() > 0) {
                     attribute = "price";
                     value = String.format("%s", statement.getPrice());
                     SharingStatementQuery sharingStatementQuery = new SharingStatementQuery(attribute, relation, value, sharingOrgId);
