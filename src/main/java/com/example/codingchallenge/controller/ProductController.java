@@ -4,9 +4,7 @@ import com.example.codingchallenge.model.*;
 import com.example.codingchallenge.securityconfig.CustomPrincipal;
 import com.example.codingchallenge.service.Impl.ProductSharingServiceImpl;
 import com.example.codingchallenge.service.ProductService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +40,7 @@ public class ProductController {
         String accessingOrgId = ((CustomPrincipal) userDetails).getUser().getOrganizationId();
         List<Product> products = productService.GetAllProducts(accessingOrgId);
 
-        return CreateProjectDTOS(accessingOrgId, products, userDetails);
+        return CreateProductDTOS(accessingOrgId, products, userDetails);
     }
 
     @PreAuthorize("hasPermission(#product.id, 'PRODUCT', 'UPDATE')")
@@ -59,8 +57,13 @@ public class ProductController {
 
     @PreAuthorize("hasPermission(#id, 'PRODUCT', 'READ')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Product ProductById(@PathVariable String id){
-        return productService.FindById(id);
+    public ProductDTO ProductById(Authentication authentication, @PathVariable String id){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String accessingOrgId = ((CustomPrincipal) userDetails).getUser().getOrganizationId();
+        Product product = productService.FindById(id);
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        return CreateProductDTOS(accessingOrgId, products, userDetails).get(0);
     }
 
     private List<Operation> GetUserAllowedOperations(UserDetails userDetails) {
@@ -77,7 +80,7 @@ public class ProductController {
     }
 
 
-    private List<ProductDTO> CreateProjectDTOS(String accessingOrgId, List<Product> products, UserDetails userDetails){
+    private List<ProductDTO> CreateProductDTOS(String accessingOrgId, List<Product> products, UserDetails userDetails){
 
         List<Operation> allowedUserOps = GetUserAllowedOperations(userDetails);
 

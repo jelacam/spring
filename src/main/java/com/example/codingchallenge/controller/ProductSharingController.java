@@ -27,6 +27,7 @@ public class ProductSharingController {
     public void CreateProductSharingStatement(Authentication authentication, ProductSharingStatement productSharingStatement){
         String sharingOrgId = ((CustomPrincipal) authentication.getPrincipal()).getUser().getOrganizationId();
         productSharingStatement.setSharingOrgId(sharingOrgId);
+        productSharingStatement.setApproved(false);
         productSharingService.CreateProductSharingStatement(productSharingStatement);
     }
 
