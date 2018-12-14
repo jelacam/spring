@@ -4,18 +4,20 @@ import com.example.codingchallenge.model.Admin;
 import com.example.codingchallenge.repository.AdminRepository;
 import com.example.codingchallenge.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
 
 @Repository
 public class AdminRepositoryImpl implements AdminRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
+
+    @Value("${voltDb.url}")
+    private String url;
 
     private String select = "SELECT id, firstName, lastName, email, organizationId FROM ADMIN WHERE id = ':id'";
     private String selectByUsername = "SELECT id, firstName, lastName, email, password, organizationId FROM ADMIN WHERE email = ':email'";

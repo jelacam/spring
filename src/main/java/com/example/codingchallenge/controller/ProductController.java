@@ -70,7 +70,8 @@ public class ProductController {
         List<Operation> operationList = new ArrayList<>();
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         for (GrantedAuthority authority : authorities){
-            if (authority.getAuthority().startsWith(Entity.PRODUCT.toString())){
+            if (authority.getAuthority().startsWith(Entity.PRODUCT.toString()) &&
+                                                    !authority.getAuthority().contains(Operation.CREATE.toString())){
                 String operation = authority.getAuthority().split("_")[1];
                 operationList.add(Operation.valueOf(operation.toUpperCase()));
             }

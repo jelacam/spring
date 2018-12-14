@@ -1,11 +1,11 @@
 package com.example.codingchallenge.repository.Impl;
 
 import com.example.codingchallenge.model.AdminRole;
-import com.example.codingchallenge.model.Permission;
 import com.example.codingchallenge.model.Role;
 import com.example.codingchallenge.repository.PermissionRepository;
 import com.example.codingchallenge.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -15,8 +15,12 @@ import java.util.List;
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
+
+    @Value("${voltDb.url}")
+    private String url;
+
     private String selectAdminRoleByAdminId = "SELECT id, adminId, roleId FROM ADMINROLE WHERE adminId = ':adminId'";
     private String selectRole = "SELECT id, name, organizationId FROM ROLE WHERE id = ':id'";
 

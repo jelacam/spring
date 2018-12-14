@@ -4,18 +4,21 @@ import com.example.codingchallenge.model.Operation;
 import com.example.codingchallenge.model.ProductSharingStatement;
 import com.example.codingchallenge.model.Relation;
 import com.example.codingchallenge.repository.ProductSharingRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 @Repository
 public class ProductSharingRepositoryImpl implements ProductSharingRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
+
+    @Value("${voltDb.url}")
+    private String url;
 
     private String selectSharingStatementByAccesssingOrgId = "SELECT * FROM PRODUCTSHARINGSTATEMENT WHERE accessingOrgId = ':accessingOrgId' " +
             "AND approved = 1";
@@ -79,11 +82,17 @@ public class ProductSharingRepositoryImpl implements ProductSharingRepository {
                 productSharingStatement.setId(results.getString("id"));
                 productSharingStatement.setSharingOrgId(results.getString("sharingOrgId"));
                 productSharingStatement.setAccessingOrgId(results.getString("accessingOrgId"));
-                if (results.getFloat("price") >= 0) {
+                if (results.getFloat("price") > -1) {
                     productSharingStatement.setPrice(results.getFloat("price"));
                 }
-                if (results.getInt("quantity") >= 0) {
+                else {
+                    productSharingStatement.setPrice(-1);
+                }
+                if (results.getInt("quantity") > -1) {
                     productSharingStatement.setQuantity(results.getInt("quantity"));
+                }
+                else {
+                    productSharingStatement.setQuantity(-1);
                 }
                 if (results.getShort("relation") >= 0) {
                     productSharingStatement.setRelation(Relation.values()[results.getShort("relation")]);

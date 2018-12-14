@@ -1,10 +1,10 @@
 package com.example.codingchallenge.repository.Impl;
 
-import com.example.codingchallenge.model.Admin;
 import com.example.codingchallenge.model.Entity;
 import com.example.codingchallenge.model.Operation;
 import com.example.codingchallenge.model.Permission;
 import com.example.codingchallenge.repository.PermissionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -14,8 +14,11 @@ import java.util.List;
 @Repository
 public class PermissionRepositoryImpl implements PermissionRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
+
+    @Value("${voltDb.url}")
+    private String url;
 
     private String select = "SELECT id, entity, operation, roleId FROM PERMISSION WHERE id = ':id'";
     private String selectByRoleId = "SELECT id, entity, operation, roleId FROM PERMISSION WHERE roleId = ':roleId'";

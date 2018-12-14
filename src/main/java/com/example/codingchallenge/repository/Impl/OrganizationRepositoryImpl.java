@@ -3,6 +3,7 @@ package com.example.codingchallenge.repository.Impl;
 import com.example.codingchallenge.model.Organization;
 import com.example.codingchallenge.repository.OrganizationRepository;
 import jdk.nashorn.internal.codegen.CompilerConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.DriverManager;
@@ -13,12 +14,11 @@ import java.util.List;
 @Repository
 public class OrganizationRepositoryImpl implements OrganizationRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
 
-    public OrganizationRepositoryImpl() {
-
-    }
+    @Value("${voltDb.url}")
+    private String url;
 
     public List<Organization> findAll(){
         String sql = "SELECT id, name, master FROM Organization";

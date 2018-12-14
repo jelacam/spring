@@ -27,11 +27,10 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
     /**
      * Method check if user has permission to execute requested operation with specific object
      * based on object id.
-     * For a specific object id method check ProductSharingStatement
      * @param objectId - requested target object id (eg. Product id)
-     * @param targetType - type of target object (eg. PRODUCT (uppercase))
+     * @param targetType - type of target object (eg. PRODUCT)
      * @param auth - authentication object
-     * @param permission - allowed permission (operation) for accessing object
+     * @param permission - allowed permission (operation) for accessing object (eg. READ)
      */
     @Override
     public boolean SharingPermission(Authentication auth, String objectId, String targetType, String permission) {
@@ -41,7 +40,9 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
 
 
         Product product = productService.FindById(objectId);
-
+        if (product == null) {
+            return false;
+        }
         // if accessing product from same organization - no need to check for sharing statements
         if (product.getOrganizationId().equals(accessingOrgId)){
             return true;
@@ -55,15 +56,19 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
         for (ProductSharingStatement productSharingStatement : productSharingStatements) {
             if (productSharingStatement.getSharingOrgId().equals(product.getOrganizationId())){
                 // check other productSharingStatement attributes if they exist
-                if(productSharingStatement.getPrice() >= 0) {
-                    return CheckRelationExpression(product.getPrice(), productSharingStatement.getRelation(),
-                                                   productSharingStatement.getPrice());
+                boolean priceEvaluation = true;
+                boolean quantityEvaluation = true;
+                if (productSharingStatement.getRelation() != null) {
+                    if (productSharingStatement.getPrice() > -1) {
+                        priceEvaluation = CheckRelationExpression(product.getPrice(), productSharingStatement.getRelation(),
+                                productSharingStatement.getPrice());
+                    }
+                    if (productSharingStatement.getQuantity() > -1) {
+                        quantityEvaluation = CheckRelationExpression(product.getQuantity(), productSharingStatement.getRelation(),
+                                productSharingStatement.getQuantity());
+                    }
                 }
-                if (productSharingStatement.getQuantity() >= 0) {
-                    return CheckRelationExpression(product.getQuantity(), productSharingStatement.getRelation(),
-                                                   productSharingStatement.getQuantity());
-                }
-                return true;
+                return priceEvaluation && quantityEvaluation;
             }
         }
 

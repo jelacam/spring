@@ -3,6 +3,7 @@ package com.example.codingchallenge.repository.Impl;
 import com.example.codingchallenge.model.Product;
 import com.example.codingchallenge.model.SharingStatementQuery;
 import com.example.codingchallenge.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 
@@ -13,8 +14,11 @@ import java.util.List;
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private String driver = "org.voltdb.jdbc.Driver";
-    private String url = "jdbc:voltdb://172.25.50.222:21212";
+    @Value("${voltDb.driver}")
+    private String driver;
+
+    @Value("${voltDb.url}")
+    private String url;
 
     private String select = "SELECT id, name, description, price, quantity, organizationId FROM PRODUCT";
     private String selectById = "SELECT id, name, description, price, quantity, organizationId FROM PRODUCT WHERE id = ':id'";
