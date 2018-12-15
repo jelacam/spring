@@ -39,28 +39,40 @@ public class EntityPermissionEvaluator implements PermissionEvaluator {
                 if (admin == null) {
                     return false;
                 }
-                return admin.getOrganizationId().equals(accessingOrgId);
+                if (admin.getOrganizationId() != null) {
+                    return admin.getOrganizationId().equals(accessingOrgId);
+                }
+                return false;
             }
             case ORGANIZATION: {
                 Organization organization = organizationService.OrganizationByID(objectId);
                 if (organization == null) {
                     return false;
                 }
-                return organization.getId().equals(accessingOrgId);
+                if (organization.getId() != null) {
+                    return organization.getId().equals(accessingOrgId);
+                }
+                return false;
             }
             case ROLE: {
                 Role role = roleService.FindById(objectId);
                 if (role == null) {
                     return false;
                 }
-                return role.getOrganizationId().equals(accessingOrgId);
+                if (role.getOrganizationId() != null) {
+                    return role.getOrganizationId().equals(accessingOrgId);
+                }
+                return false;
             }
             case SHARING_STATEMENT: {
                 ProductSharingStatement productSharingStatement = productSharingService.FindById(objectId);
                 if (productSharingStatement == null) {
                     return false;
                 }
-                return productSharingStatement.getSharingOrgId().equals(accessingOrgId);
+                if (productSharingStatement.getSharingOrgId() != null) {
+                    return productSharingStatement.getSharingOrgId().equals(accessingOrgId);
+                }
+                return false;
             }
             default: {
                 return false;

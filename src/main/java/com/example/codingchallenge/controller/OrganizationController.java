@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Path;
 import java.util.*;
 
 @RestController
@@ -25,10 +26,10 @@ public class OrganizationController {
         organizationService.CreateOrganization(organization);
     }
 
-
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<Organization> GetOrganizations(){
-        return organizationService.getAll();
+    @PreAuthorize("hasPermission(#id, 'ORGANIZATION', 'READ')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Organization GetOrganization(@PathVariable String id){
+        return organizationService.OrganizationByID(id);
     }
 
     @PreAuthorize("hasPermission(#organization.id, 'ORGANIZATION', 'UPDATE')")

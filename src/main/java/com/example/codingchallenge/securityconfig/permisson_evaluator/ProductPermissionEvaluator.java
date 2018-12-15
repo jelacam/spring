@@ -43,10 +43,9 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
         if (product == null) {
             return false;
         }
+        if (product.getOrganizationId() == null) { return false; }
         // if accessing product from same organization - no need to check for sharing statements
-        if (product.getOrganizationId().equals(accessingOrgId)){
-            return true;
-        }
+        if (product.getOrganizationId().equals(accessingOrgId)){ return true; }
 
         // get product sharing statement based on accesingOrgId and allowed accessing object permission
         List<ProductSharingStatement> productSharingStatements =
@@ -58,6 +57,7 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
                 // check other productSharingStatement attributes if they exist
                 boolean priceEvaluation = true;
                 boolean quantityEvaluation = true;
+                // if relation null - organization share all data, no need to check price and quantity
                 if (productSharingStatement.getRelation() != null) {
                     if (productSharingStatement.getPrice() > -1) {
                         priceEvaluation = CheckRelationExpression(product.getPrice(), productSharingStatement.getRelation(),
@@ -71,7 +71,6 @@ public class ProductPermissionEvaluator implements PermissionEvaluator {
                 return priceEvaluation && quantityEvaluation;
             }
         }
-
         return false;
     }
 

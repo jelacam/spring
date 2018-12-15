@@ -40,6 +40,8 @@ public class RoleController {
         return roleService.UpdateRole(role);
     }
 
+    @PreAuthorize("hasPermission(#id, 'ROLE', 'DELETE')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public boolean DeleteRole(@PathVariable String id){
         return roleService.DeleteRole(id);
     }

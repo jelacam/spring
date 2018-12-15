@@ -4,6 +4,7 @@ import com.example.codingchallenge.model.*;
 import com.example.codingchallenge.securityconfig.CustomPrincipal;
 import com.example.codingchallenge.service.Impl.ProductSharingServiceImpl;
 import com.example.codingchallenge.service.ProductService;
+import com.example.codingchallenge.service.ProductSharingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,7 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    private ProductSharingServiceImpl productSharingService;
+    private ProductSharingService productSharingService;
 
     @PreAuthorize("hasPermission(new com.example.codingchallenge.model.Product(), 'CREATE')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)

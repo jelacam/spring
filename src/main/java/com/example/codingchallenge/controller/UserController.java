@@ -33,6 +33,7 @@ public class UserController {
         return userService.updateAdmin(admin);
     }
 
+    @PreAuthorize("hasPermission(#id, 'ADMIN', 'DELETE')")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public boolean deleteAdmin(@PathVariable String id) {
         return userService.deleteAdmin(id);
