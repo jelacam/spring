@@ -22,11 +22,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Admin admin = adminRepository.findAdminByUsername(username);
-        if (admin == null) {
-            throw new UsernameNotFoundException(username);
+        if (admin == null || admin.getId() == null) {
+                throw new UsernameNotFoundException(username);
         }
+
         admin.setPermissions(permissionRepository.FindByAdminId(admin.getId()));
         return new CustomPrincipal(admin);
-
     }
 }
